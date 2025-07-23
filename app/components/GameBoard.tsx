@@ -22,7 +22,6 @@ export default function GameBoard() {
     resetGame,
     updateTime,
     canFlipCard,
-    getGameProgress,
     isGameActive,
     isGameCompleted,
     isGamePaused,
