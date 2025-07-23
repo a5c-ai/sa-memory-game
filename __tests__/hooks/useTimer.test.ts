@@ -1,16 +1,13 @@
 import { renderHook, act } from '@testing-library/react'
 import { useTimer } from '../../app/hooks/useTimer'
 
-// Mock timers
-jest.useFakeTimers()
-
 describe('useTimer hook', () => {
   beforeEach(() => {
+    jest.useFakeTimers()
     jest.clearAllTimers()
   })
 
   afterEach(() => {
-    jest.runOnlyPendingTimers()
     jest.useRealTimers()
   })
 

@@ -11,15 +11,12 @@ export function useTimer() {
   });
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const startTimeRef = useRef<number>(0);
-  const pausedTimeRef = useRef<number>(0);
 
   const start = useCallback(() => {
     if (timerState.isRunning && !timerState.isPaused) return;
 
     if (timerState.isPaused) {
       // Resume from pause
-      startTimeRef.current = Date.now() - pausedTimeRef.current;
       setTimerState(prev => ({
         ...prev,
         isRunning: true,
@@ -27,7 +24,6 @@ export function useTimer() {
       }));
     } else {
       // Start fresh
-      startTimeRef.current = Date.now();
       setTimerState({
         timeElapsed: 0,
         isRunning: true,
@@ -36,12 +32,9 @@ export function useTimer() {
     }
 
     intervalRef.current = setInterval(() => {
-      const currentTime = Date.now();
-      const elapsed = Math.floor((currentTime - startTimeRef.current) / 1000);
-      
       setTimerState(prev => ({
         ...prev,
-        timeElapsed: elapsed
+        timeElapsed: prev.timeElapsed + 1
       }));
     }, 1000);
   }, [timerState.isRunning, timerState.isPaused]);
@@ -53,14 +46,13 @@ export function useTimer() {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-
-    pausedTimeRef.current = timerState.timeElapsed * 1000; // Store in milliseconds
     
     setTimerState(prev => ({
       ...prev,
+      isRunning: false,
       isPaused: true
     }));
-  }, [timerState.isRunning, timerState.isPaused, timerState.timeElapsed]);
+  }, [timerState.isRunning, timerState.isPaused]);
 
   const resume = useCallback(() => {
     if (!timerState.isPaused) return;
@@ -79,9 +71,6 @@ export function useTimer() {
       isRunning: false,
       isPaused: false
     });
-
-    startTimeRef.current = 0;
-    pausedTimeRef.current = 0;
   }, []);
 
   const reset = useCallback(() => {
