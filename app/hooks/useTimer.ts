@@ -58,6 +58,7 @@ export function useTimer() {
     
     setTimerState(prev => ({
       ...prev,
+      isRunning: false,
       isPaused: true
     }));
   }, [timerState.isRunning, timerState.isPaused, timerState.timeElapsed]);

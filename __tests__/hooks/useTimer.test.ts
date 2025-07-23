@@ -1,12 +1,10 @@
 import { renderHook, act } from '@testing-library/react'
 import { useTimer } from '../../app/hooks/useTimer'
 
-// Mock timers
-jest.useFakeTimers()
-
 describe('useTimer hook', () => {
   beforeEach(() => {
-    jest.clearAllTimers()
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2023-01-01T00:00:00.000Z'))
   })
 
   afterEach(() => {
@@ -126,11 +124,14 @@ describe('useTimer hook', () => {
       result.current.start()
     })
     
-    const initialTimerCount = jest.getTimerCount()
+    // Check that timer is running
+    expect(result.current.isRunning).toBe(true)
+    expect(jest.getTimerCount()).toBeGreaterThan(0)
     
     unmount()
     
-    expect(jest.getTimerCount()).toBeLessThan(initialTimerCount)
+    // After unmount, there should be no timers left
+    expect(jest.getTimerCount()).toBe(0)
   })
 
   it('should format time correctly', () => {
