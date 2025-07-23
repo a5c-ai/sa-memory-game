@@ -14,8 +14,8 @@ import {
   getFlippedCards,
   getMatchedCards,
 } from '../../app/utils/gameLogic'
-import { MOCK_CATEGORIES, createMockBoard } from '../fixtures/game-data'
-import { createMockCard } from '../utils/test-utils'
+import { MOCK_CATEGORIES, createMockBoard } from '../fixtures/data/game-data'
+import { createMockCard } from '../utils/test-helpers/test-utils'
 
 describe('gameLogic utilities', () => {
   describe('fisherYatesShuffle', () => {
