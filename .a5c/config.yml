@@ -29,8 +29,22 @@ remote_agents:
   retry_delay: 2000   # 2 seconds
   sources:
     individual:
-      - uri: "https://raw.githubusercontent.com/a5c-ai/registry/main/agents/development/project-seeder-agent.agent.md"
-        alias: "project-seeder-agent"
+      - uri: "https://raw.githubusercontent.com/a5c-ai/registry/main/agents/development/developer-agent.agent.md"
+        alias: "developer-agent"
+      - uri: "https://raw.githubusercontent.com/a5c-ai/registry/main/agents/development/validator-agent.agent.md"
+        alias: "validator-agent"
+      - uri: "https://raw.githubusercontent.com/a5c-ai/registry/main/agents/development/build-fixer-agent.agent.md"
+        alias: "build-fixer-agent"
+      - uri: "https://raw.githubusercontent.com/a5c-ai/registry/main/agents/research/researcher-base-agent.agent.md"
+        alias: "researcher-base-agent"
+      - uri: "https://raw.githubusercontent.com/a5c-ai/registry/main/agents/communication/content-writer-agent.agent.md"
+        alias: "content-writer-agent"
+      - uri: "https://raw.githubusercontent.com/a5c-ai/registry/main/agents/development/producer-agent.agent.md"
+        alias: "producer-agent"
+      - uri: "https://raw.githubusercontent.com/a5c-ai/registry/main/agents/development/conflict-resolver-agent.agent.md"
+        alias: "conflict-resolver-agent"
+      - uri: "https://raw.githubusercontent.com/a5c-ai/registry/main/agents/development/recruiter-agent.agent.md"
+        alias: "recruiter-agent"
 # Override agent discovery settings
 # agent_discovery:
 #   enabled: true
