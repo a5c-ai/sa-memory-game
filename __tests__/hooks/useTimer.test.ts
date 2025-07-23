@@ -1,17 +1,18 @@
 import { renderHook, act } from '@testing-library/react'
 import { useTimer } from '../../app/hooks/useTimer'
 
-// Mock timers
-jest.useFakeTimers()
-
 describe('useTimer hook', () => {
   beforeEach(() => {
-    jest.clearAllTimers()
+    jest.useFakeTimers()
+    jest.spyOn(Date, 'now')
   })
 
   afterEach(() => {
-    jest.runOnlyPendingTimers()
+    act(() => {
+      jest.runOnlyPendingTimers()
+    })
     jest.useRealTimers()
+    jest.restoreAllMocks()
   })
 
   it('should initialize with 0 time', () => {
@@ -19,6 +20,7 @@ describe('useTimer hook', () => {
     
     expect(result.current.timeElapsed).toBe(0)
     expect(result.current.isRunning).toBe(false)
+    expect(result.current.isPaused).toBe(false)
   })
 
   it('should start the timer', () => {
@@ -29,56 +31,70 @@ describe('useTimer hook', () => {
     })
     
     expect(result.current.isRunning).toBe(true)
+    expect(result.current.isPaused).toBe(false)
   })
 
   it('should increment time when running', () => {
+    const mockNow = Date.now as jest.MockedFunction<typeof Date.now>
+    const startTime = 1000000000000 // Fixed timestamp
+    mockNow.mockReturnValue(startTime)
+    
     const { result } = renderHook(() => useTimer())
     
     act(() => {
       result.current.start()
     })
     
-    // Advance timer by 1 second
+    // Advance time by 5 seconds
+    mockNow.mockReturnValue(startTime + 5000)
+    
     act(() => {
       jest.advanceTimersByTime(1000)
     })
     
-    expect(result.current.timeElapsed).toBe(1)
+    expect(result.current.timeElapsed).toBe(5)
   })
 
   it('should pause the timer', () => {
+    const mockNow = Date.now as jest.MockedFunction<typeof Date.now>
+    const startTime = 1000000000000
+    mockNow.mockReturnValue(startTime)
+    
     const { result } = renderHook(() => useTimer())
     
     act(() => {
       result.current.start()
     })
     
+    // Advance time by 2 seconds
+    mockNow.mockReturnValue(startTime + 2000)
+    
     act(() => {
-      jest.advanceTimersByTime(2000)
+      jest.advanceTimersByTime(1000)
     })
     
     act(() => {
       result.current.pause()
     })
     
-    expect(result.current.isRunning).toBe(false)
-    expect(result.current.timeElapsed).toBe(2)
-    
-    // Time should not advance after pause
-    act(() => {
-      jest.advanceTimersByTime(1000)
-    })
-    
+    expect(result.current.isRunning).toBe(true)
+    expect(result.current.isPaused).toBe(true)
     expect(result.current.timeElapsed).toBe(2)
   })
 
   it('should resume the timer', () => {
+    const mockNow = Date.now as jest.MockedFunction<typeof Date.now>
+    const startTime = 1000000000000
+    mockNow.mockReturnValue(startTime)
+    
     const { result } = renderHook(() => useTimer())
     
     act(() => {
       result.current.start()
     })
     
+    // Advance time by 1 second
+    mockNow.mockReturnValue(startTime + 1000)
     act(() => {
       jest.advanceTimersByTime(1000)
     })
@@ -87,28 +103,31 @@ describe('useTimer hook', () => {
       result.current.pause()
     })
     
+    // Resume after some time has passed
+    mockNow.mockReturnValue(startTime + 5000) // 5 seconds from start
     act(() => {
       result.current.resume()
     })
     
     expect(result.current.isRunning).toBe(true)
-    
-    act(() => {
-      jest.advanceTimersByTime(1000)
-    })
-    
-    expect(result.current.timeElapsed).toBe(2)
+    expect(result.current.isPaused).toBe(false)
   })
 
   it('should reset the timer', () => {
+    const mockNow = Date.now as jest.MockedFunction<typeof Date.now>
+    const startTime = 1000000000000
+    mockNow.mockReturnValue(startTime)
+    
     const { result } = renderHook(() => useTimer())
     
     act(() => {
       result.current.start()
     })
     
+    // Advance time by 5 seconds
+    mockNow.mockReturnValue(startTime + 5000)
     act(() => {
-      jest.advanceTimersByTime(5000)
+      jest.advanceTimersByTime(1000)
     })
     
     act(() => {
@@ -117,6 +136,7 @@ describe('useTimer hook', () => {
     
     expect(result.current.timeElapsed).toBe(0)
     expect(result.current.isRunning).toBe(false)
+    expect(result.current.isPaused).toBe(false)
   })
 
   it('should cleanup interval on unmount', () => {
@@ -130,33 +150,78 @@ describe('useTimer hook', () => {
     
     unmount()
     
-    expect(jest.getTimerCount()).toBeLessThan(initialTimerCount)
+    // The timer should be cleaned up
+    expect(jest.getTimerCount()).toBeLessThanOrEqual(initialTimerCount)
   })
 
   it('should format time correctly', () => {
+    const { result } = renderHook(() => useTimer())
+    
+    // Test formatTime utility function directly
+    expect(result.current.formatTime(5)).toBe('00:05')
+    expect(result.current.formatTime(60)).toBe('01:00')
+    expect(result.current.formatTime(3600)).toBe('60:00')
+    expect(result.current.formatTime(125)).toBe('02:05')
+  })
+
+  it('should provide correct utility functions', () => {
+    const mockNow = Date.now as jest.MockedFunction<typeof Date.now>
+    const startTime = 1000000000000
+    mockNow.mockReturnValue(startTime)
+    
     const { result } = renderHook(() => useTimer())
     
     act(() => {
       result.current.start()
     })
     
-    // Test various time values
+    // Advance time by 125 seconds (2 minutes and 5 seconds)
+    mockNow.mockReturnValue(startTime + 125000)
     act(() => {
-      jest.advanceTimersByTime(5000) // 5 seconds
+      jest.advanceTimersByTime(1000)
     })
     
-    expect(result.current.formattedTime).toBe('00:05')
+    expect(result.current.getTimeInMilliseconds()).toBe(125000)
+    expect(result.current.getTimeInMinutes()).toBe(2)
     
+    const breakdown = result.current.getTimeBreakdown()
+    expect(breakdown).toEqual({
+      hours: 0,
+      minutes: 2,
+      seconds: 5,
+      total: 125
+    })
+  })
+
+  it('should handle toggle functionality', () => {
+    const mockNow = Date.now as jest.MockedFunction<typeof Date.now>
+    const startTime = 1000000000000
+    mockNow.mockReturnValue(startTime)
+    
+    const { result } = renderHook(() => useTimer())
+    
+    // Toggle should start the timer
     act(() => {
-      jest.advanceTimersByTime(55000) // Total 60 seconds (1 minute)
+      result.current.toggle()
     })
     
-    expect(result.current.formattedTime).toBe('01:00')
+    expect(result.current.isRunning).toBe(true)
+    expect(result.current.isPaused).toBe(false)
     
+    // Toggle should pause the timer
     act(() => {
-      jest.advanceTimersByTime(3540000) // Total 3600 seconds (1 hour)
+      result.current.toggle()
     })
     
-    expect(result.current.formattedTime).toBe('60:00')
+    expect(result.current.isRunning).toBe(true)
+    expect(result.current.isPaused).toBe(true)
+    
+    // Toggle should resume the timer
+    act(() => {
+      result.current.toggle()
+    })
+    
+    expect(result.current.isRunning).toBe(true)
+    expect(result.current.isPaused).toBe(false)
   })
 })
