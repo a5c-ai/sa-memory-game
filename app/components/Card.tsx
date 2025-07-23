@@ -53,7 +53,6 @@ export default function Card({ card, onClick, disabled = false }: CardProps) {
           border-2 border-white/20 shadow-lg
           flex items-center justify-center
           backface-hidden
-          ${card.isFlipped || card.isMatched ? 'rotate-y-180' : ''}
         `}
       >
         <div className="text-white text-2xl font-bold">?</div>
@@ -67,7 +66,6 @@ export default function Card({ card, onClick, disabled = false }: CardProps) {
           flex items-center justify-center
           backface-hidden rotate-y-180
           ${card.isMatched ? 'bg-green-100 border-green-300' : ''}
-          ${card.isFlipped || card.isMatched ? '' : 'rotate-y-180'}
         `}
       >
         <div className="text-4xl" role="img" aria-label={`Emoji ${card.emoji}`}>
