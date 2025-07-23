@@ -8,9 +8,7 @@ describe('useTimer hook', () => {
   })
 
   afterEach(() => {
-    act(() => {
-      jest.runOnlyPendingTimers()
-    })
+    jest.runOnlyPendingTimers()
     jest.useRealTimers()
     jest.restoreAllMocks()
   })
@@ -35,31 +33,21 @@ describe('useTimer hook', () => {
   })
 
   it('should increment time when running', () => {
-    const mockNow = Date.now as jest.MockedFunction<typeof Date.now>
-    const startTime = 1000000000000 // Fixed timestamp
-    mockNow.mockReturnValue(startTime)
-    
     const { result } = renderHook(() => useTimer())
     
     act(() => {
       result.current.start()
     })
     
-    // Advance time by 5 seconds
-    mockNow.mockReturnValue(startTime + 5000)
-    
+    // Advance timer by 1 second
     act(() => {
       jest.advanceTimersByTime(1000)
     })
     
-    expect(result.current.timeElapsed).toBe(5)
+    expect(result.current.timeElapsed).toBe(1)
   })
 
   it('should pause the timer', () => {
-    const mockNow = Date.now as jest.MockedFunction<typeof Date.now>
-    const startTime = 1000000000000
-    mockNow.mockReturnValue(startTime)
-    
     const { result } = renderHook(() => useTimer())
     
     act(() => {
@@ -67,10 +55,8 @@ describe('useTimer hook', () => {
     })
     
     // Advance time by 2 seconds
-    mockNow.mockReturnValue(startTime + 2000)
-    
     act(() => {
-      jest.advanceTimersByTime(1000)
+      jest.advanceTimersByTime(2000)
     })
     
     act(() => {
@@ -83,10 +69,6 @@ describe('useTimer hook', () => {
   })
 
   it('should resume the timer', () => {
-    const mockNow = Date.now as jest.MockedFunction<typeof Date.now>
-    const startTime = 1000000000000
-    mockNow.mockReturnValue(startTime)
-    
     const { result } = renderHook(() => useTimer())
     
     act(() => {
@@ -94,7 +76,6 @@ describe('useTimer hook', () => {
     })
     
     // Advance time by 1 second
-    mockNow.mockReturnValue(startTime + 1000)
     act(() => {
       jest.advanceTimersByTime(1000)
     })
@@ -103,8 +84,6 @@ describe('useTimer hook', () => {
       result.current.pause()
     })
     
-    // Resume after some time has passed
-    mockNow.mockReturnValue(startTime + 5000) // 5 seconds from start
     act(() => {
       result.current.resume()
     })
@@ -114,10 +93,6 @@ describe('useTimer hook', () => {
   })
 
   it('should reset the timer', () => {
-    const mockNow = Date.now as jest.MockedFunction<typeof Date.now>
-    const startTime = 1000000000000
-    mockNow.mockReturnValue(startTime)
-    
     const { result } = renderHook(() => useTimer())
     
     act(() => {
@@ -125,9 +100,8 @@ describe('useTimer hook', () => {
     })
     
     // Advance time by 5 seconds
-    mockNow.mockReturnValue(startTime + 5000)
     act(() => {
-      jest.advanceTimersByTime(1000)
+      jest.advanceTimersByTime(5000)
     })
     
     act(() => {
@@ -151,7 +125,7 @@ describe('useTimer hook', () => {
     unmount()
     
     // The timer should be cleaned up
-    expect(jest.getTimerCount()).toBeLessThanOrEqual(initialTimerCount)
+    expect(jest.getTimerCount()).toBeLessThan(initialTimerCount)
   })
 
   it('should format time correctly', () => {
@@ -165,10 +139,6 @@ describe('useTimer hook', () => {
   })
 
   it('should provide correct utility functions', () => {
-    const mockNow = Date.now as jest.MockedFunction<typeof Date.now>
-    const startTime = 1000000000000
-    mockNow.mockReturnValue(startTime)
-    
     const { result } = renderHook(() => useTimer())
     
     act(() => {
@@ -176,9 +146,8 @@ describe('useTimer hook', () => {
     })
     
     // Advance time by 125 seconds (2 minutes and 5 seconds)
-    mockNow.mockReturnValue(startTime + 125000)
     act(() => {
-      jest.advanceTimersByTime(1000)
+      jest.advanceTimersByTime(125000)
     })
     
     expect(result.current.getTimeInMilliseconds()).toBe(125000)
@@ -194,10 +163,6 @@ describe('useTimer hook', () => {
   })
 
   it('should handle toggle functionality', () => {
-    const mockNow = Date.now as jest.MockedFunction<typeof Date.now>
-    const startTime = 1000000000000
-    mockNow.mockReturnValue(startTime)
-    
     const { result } = renderHook(() => useTimer())
     
     // Toggle should start the timer
