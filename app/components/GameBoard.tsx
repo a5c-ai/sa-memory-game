@@ -9,7 +9,7 @@ import CategorySelector from './CategorySelector';
 import { useGameState } from '../hooks/useGameState';
 import { useTimer } from '../hooks/useTimer';
 import { Difficulty, EmojiCategory, DIFFICULTY_CONFIGS } from '../types/game';
-import { EMOJI_CATEGORIES, getDefaultCategory } from '../utils/emojiData';
+import { getDefaultCategory } from '../utils/emojiData';
 
 export default function GameBoard() {
   // Game state management
@@ -95,7 +95,6 @@ export default function GameBoard() {
     gridTemplateColumns: `repeat(${gridCols}, 1fr)`,
   };
 
-  const progress = getGameProgress();
 
   return (
     <div className="w-full max-w-6xl mx-auto space-y-6">
