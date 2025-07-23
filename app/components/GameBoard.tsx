@@ -145,7 +145,7 @@ export default function GameBoard({
           );
           setFlippedCards([]);
           setDisabled(false);
-        }, 1000);
+        }, 2000);
       }
     }
   };
