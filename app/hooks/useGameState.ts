@@ -4,11 +4,13 @@ import { useReducer, useCallback, useEffect } from 'react';
 import { 
   GameState, 
   GameAction, 
-  Card, 
   Difficulty, 
   EmojiCategory, 
   DIFFICULTY_CONFIGS
 } from '../types/game';
+import { createGameBoard, canFlipCard as canFlipCardUtil } from '../utils/gameLogic';
+import { calculateGameScore } from '../utils/scoring';
+import { getDefaultCategory } from '../utils/emojiData';
 
 const initialGameState: GameState = {
   board: [],
@@ -18,12 +20,7 @@ const initialGameState: GameState = {
   timeElapsed: 0,
   gameStatus: 'setup',
   difficulty: 'easy',
-  category: {
-    id: 'food',
-    name: 'Food & Drink',
-    emojis: ['🍎', '🍌', '🍇', '🍊', '🍋', '🍉', '🍓', '🥝'],
-    description: 'Delicious foods and beverages'
-  },
+  category: getDefaultCategory(),
   score: 0
 };
 
@@ -88,14 +85,18 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       const newMatchedPairs = firstCard ? [...state.matchedPairs, firstCard.pairId] : state.matchedPairs;
       const newMoves = state.moves + 1;
       
-      // Calculate score based on moves and time
-      const timeBonus = Math.max(0, 1000 - state.timeElapsed);
-      const moveBonus = Math.max(0, 1000 - newMoves * 10);
-      const newScore = state.score + 100 + timeBonus + moveBonus;
-
       // Check if game is completed
       const totalPairs = DIFFICULTY_CONFIGS[state.difficulty].pairs;
       const gameCompleted = newMatchedPairs.length === totalPairs;
+      
+      // Calculate score using the new scoring system
+      const newScore = calculateGameScore(
+        state.difficulty,
+        state.timeElapsed,
+        newMoves,
+        newMatchedPairs.length,
+        gameCompleted
+      );
 
       return {
         ...state,
@@ -171,49 +172,6 @@ function gameReducer(state: GameState, action: GameAction): GameState {
   }
 }
 
-function createGameBoard(difficulty: Difficulty, category: EmojiCategory): Card[] {
-  const config = DIFFICULTY_CONFIGS[difficulty];
-  const { pairs } = config;
-  
-  // Select emojis for the game
-  const selectedEmojis = category.emojis.slice(0, pairs);
-  
-  // Create card pairs
-  const cards: Card[] = [];
-  selectedEmojis.forEach((emoji, index) => {
-    // First card of the pair
-    cards.push({
-      id: index * 2,
-      emoji,
-      isFlipped: false,
-      isMatched: false,
-      pairId: index
-    });
-    
-    // Second card of the pair
-    cards.push({
-      id: index * 2 + 1,
-      emoji,
-      isFlipped: false,
-      isMatched: false,
-      pairId: index
-    });
-  });
-
-  // Shuffle cards using Fisher-Yates algorithm
-  const shuffledCards = [...cards];
-  for (let i = shuffledCards.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffledCards[i], shuffledCards[j]] = [shuffledCards[j], shuffledCards[i]];
-  }
-
-  // Update IDs to match shuffled positions
-  shuffledCards.forEach((card, index) => {
-    card.id = index;
-  });
-
-  return shuffledCards;
-}
 
 export function useGameState() {
   const [state, dispatch] = useReducer(gameReducer, initialGameState);
@@ -289,11 +247,8 @@ export function useGameState() {
   }, [state.flippedCards, state.board, handleCardMatch, handleCardUnmatch]);
 
   const canFlipCard = useCallback((cardId: number) => {
-    if (state.gameStatus !== 'playing') return false;
-    if (state.flippedCards.length >= 2) return false;
-    
     const card = state.board.find(c => c.id === cardId);
-    return card && !card.isFlipped && !card.isMatched;
+    return canFlipCardUtil(card, state.flippedCards.length, state.gameStatus);
   }, [state.gameStatus, state.flippedCards.length, state.board]);
 
   const getGameProgress = useCallback(() => {
