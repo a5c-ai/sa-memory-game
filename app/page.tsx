@@ -37,7 +37,7 @@ export default function Home() {
       <div className="container mx-auto px-4 py-8">
         <header className="text-center mb-8">
           <h1 className="text-4xl md:text-6xl font-bold text-gray-800 dark:text-white mb-4 animate-fade-in">
-            🧠 Emoji Memory Game
+            🧠 <a href='https://github.com/shaialon' target="_blank">Shai's</a> Emoji Memory Game
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
             Test your memory by matching pairs of emojis! Choose your difficulty level, 
@@ -69,9 +69,9 @@ export default function Home() {
 
         <footer className="text-center mt-12 text-gray-500 dark:text-gray-400">
           <div className="space-y-2">
-            <p>Built with Next.js 15, React 19, and Tailwind CSS</p>
+            <p>Powered by a5c.ai</p>
             <p className="text-sm">
-              🚀 Optimized for all devices • 🌙 Dark mode support • 💾 Local progress saving
+              🚀 Optimized for all devices
             </p>
           </div>
         </footer>
