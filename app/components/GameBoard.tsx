@@ -6,8 +6,10 @@ import GameControls from './GameControls';
 import GameStats from './GameStats';
 import DifficultySelector from './DifficultySelector';
 import CategorySelector from './CategorySelector';
+import GameOverModal from './GameOverModal';
 import { useGameState } from '../hooks/useGameState';
 import { useTimer } from '../hooks/useTimer';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 import { Difficulty, EmojiCategory, DIFFICULTY_CONFIGS } from '../types/game';
 import { getDefaultCategory } from '../utils/emojiData';
 
@@ -38,9 +40,13 @@ export default function GameBoard() {
     isRunning: isTimerRunning
   } = useTimer();
 
+  // Local storage management
+  const { updateGameStats } = useLocalStorage();
+
   // Local state for game configuration
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('easy');
   const [selectedCategory, setSelectedCategory] = useState<EmojiCategory>(getDefaultCategory());
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Sync timer with game state
   useEffect(() => {
@@ -57,6 +63,23 @@ export default function GameBoard() {
   useEffect(() => {
     updateTime(timeElapsed);
   }, [timeElapsed, updateTime]);
+
+  // Handle game completion
+  useEffect(() => {
+    if (isGameCompleted && !isModalOpen) {
+      // Save game statistics to local storage
+      updateGameStats(
+        gameState.difficulty,
+        gameState.moves,
+        gameState.timeElapsed,
+        true, // won
+        gameState.score,
+        gameState.category.id
+      );
+      // Show modal after a brief delay for celebration effect
+      setTimeout(() => setIsModalOpen(true), 1000);
+    }
+  }, [isGameCompleted, isModalOpen, gameState, updateGameStats]);
 
   // Game control handlers
   const handleStartGame = (difficulty: Difficulty, category: EmojiCategory) => {
@@ -85,6 +108,21 @@ export default function GameBoard() {
     if (canFlipCard(cardId)) {
       flipCard(cardId);
     }
+  };
+
+  // Modal handlers
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handlePlayAgain = () => {
+    setIsModalOpen(false);
+    handleStartGame(gameState.difficulty, gameState.category);
+  };
+
+  const handleChangeDifficulty = () => {
+    setIsModalOpen(false);
+    handleResetGame();
   };
 
   const config = DIFFICULTY_CONFIGS[gameState.difficulty];
@@ -156,20 +194,14 @@ export default function GameBoard() {
         </div>
       )}
 
-      {/* Game Completion Message */}
-      {isGameCompleted && (
-        <div className="text-center">
-          <div className="bg-gradient-to-r from-green-100 to-blue-100 border border-green-400 text-green-800 px-6 py-4 rounded-xl shadow-lg">
-            <h3 className="text-2xl font-bold mb-2">🎉 Congratulations!</h3>
-            <p className="text-lg mb-2">You completed the {gameState.difficulty} level!</p>
-            <div className="flex justify-center gap-4 text-sm text-gray-600 mb-4">
-              <span>⏱️ Time: {Math.floor(gameState.timeElapsed / 60)}:{(gameState.timeElapsed % 60).toString().padStart(2, '0')}</span>
-              <span>🎯 Moves: {gameState.moves}</span>
-              <span>⭐ Score: {gameState.score.toLocaleString()}</span>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Game Over Modal */}
+      <GameOverModal
+        gameState={gameState}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onPlayAgain={handlePlayAgain}
+        onChangeDifficulty={handleChangeDifficulty}
+      />
     </div>
   );
 }
