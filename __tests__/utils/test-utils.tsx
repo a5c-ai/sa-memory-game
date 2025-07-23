@@ -82,3 +82,10 @@ export const measureRenderTime = async (renderFn: () => void) => {
   const end = performance.now()
   return end - start
 }
+
+// Add a dummy test to satisfy Jest
+describe('dummy', () => {
+  it('should pass', () => {
+    expect(true).toBe(true)
+  })
+})

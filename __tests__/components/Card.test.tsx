@@ -36,7 +36,8 @@ describe('Card Component', () => {
     // Should show the emoji and have matched styling
     expect(screen.getByText(card.emoji)).toBeVisible()
     const cardElement = screen.getByRole('button')
-    expect(cardElement).toHaveClass('bg-green-100', 'border-green-300')
+    expect(cardElement).toHaveClass('bg-green-100')
+    expect(cardElement).toHaveClass('border-green-300')
   })
 
   it('calls onClick when clicked', async () => {
@@ -78,7 +79,8 @@ describe('Card Component', () => {
     await user.click(cardElement)
     
     expect(mockOnClick).not.toHaveBeenCalled()
-    expect(cardElement).toHaveClass('cursor-not-allowed', 'opacity-75')
+    expect(cardElement).toHaveClass('cursor-not-allowed')
+    expect(cardElement).toHaveClass('opacity-75')
   })
 
   it('supports keyboard navigation', async () => {
@@ -146,7 +148,8 @@ describe('Card Component', () => {
     render(<Card card={card} onClick={mockOnClick} disabled />)
     
     const cardElement = screen.getByRole('button')
-    expect(cardElement).toHaveClass('cursor-not-allowed', 'opacity-75')
+    expect(cardElement).toHaveClass('cursor-not-allowed')
+    expect(cardElement).toHaveClass('opacity-75')
     expect(cardElement).not.toHaveClass('hover:scale-105')
   })
 })

@@ -87,7 +87,7 @@ test.describe('Performance Tests', () => {
       const cardElement = document.querySelector(cardSelector)
       if (!cardElement) return 0
       
-      const startTime = performance.now()
+      const startTime = (window as any).performance.now()
       
       // Trigger card flip
       (cardElement as HTMLElement).click()
@@ -96,7 +96,7 @@ test.describe('Performance Tests', () => {
       return new Promise<number>(resolve => {
         const observer = new MutationObserver(() => {
           if (cardElement.classList.contains('rotate-y-180')) {
-            const endTime = performance.now()
+            const endTime = (window as any).performance.now()
             observer.disconnect()
             resolve(endTime - startTime)
           }
