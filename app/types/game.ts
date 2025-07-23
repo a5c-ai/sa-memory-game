@@ -33,6 +33,45 @@ export interface GameStats {
   bestTimes: Record<Difficulty, number>;
   bestMoves: Record<Difficulty, number>;
   completionRate: number;
+  averageTime: number;
+  averageMoves: number;
+  gamesWon: number;
+  gamesLost: number;
+}
+
+export interface GameAction {
+  type: 'FLIP_CARD' | 'MATCH_CARDS' | 'UNMATCH_CARDS' | 'RESET_GAME' | 'START_GAME' | 'PAUSE_GAME' | 'RESUME_GAME' | 'COMPLETE_GAME' | 'UPDATE_TIME';
+  payload?: {
+    cardId?: number;
+    cardIds?: number[];
+    difficulty?: Difficulty;
+    category?: EmojiCategory;
+    timeElapsed?: number;
+  };
+}
+
+export interface TimerState {
+  timeElapsed: number;
+  isRunning: boolean;
+  isPaused: boolean;
+}
+
+export interface LocalStorageData {
+  gameStats: GameStats;
+  highScores: Array<{
+    difficulty: Difficulty;
+    category: string;
+    moves: number;
+    time: number;
+    score: number;
+    date: string;
+  }>;
+  preferences: {
+    soundEnabled: boolean;
+    animationEnabled: boolean;
+    defaultDifficulty: Difficulty;
+    defaultCategory: string;
+  };
 }
 
 export interface DifficultyConfig {
