@@ -32,7 +32,7 @@ For example, if you are using Vercel, you will need to set the following environ
 1. Click the "Use this template" button to start your own project.
 
 2. Write the initial requirements in the project description (in github, main page)
-3. @project-seeder-agent should kick off the project 
+3. @project-seeder-agent should kick off the project
 4. The Seeder Agent will create the initial project structure, recruit the team, and start building the project, iterating and refining the project as it goes.
 5. Enjoy the project being created by the a5c continuum of agents.
 
