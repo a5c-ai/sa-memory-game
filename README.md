@@ -29,9 +29,11 @@ Then, run the development server:
 npm run dev
 ```
 
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Game Rules
+
 
 1. Click on cards to flip them and reveal emojis
 2. Match pairs of identical emojis
