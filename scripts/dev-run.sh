@@ -1,3 +1,6 @@
 #!/bin/bash
 
-# TODO: run dev commands according to the project stack, requirements, etc. (for example: npm run dev, or npm start)
+set -e  # Exit on any error
+
+echo "🚀 Starting Next.js development server with Turbopack..."
+npm run dev
