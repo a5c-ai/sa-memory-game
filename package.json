@@ -8,7 +8,15 @@
     "export": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:accessibility": "playwright test e2e/game-accessibility.spec.ts",
+    "test:all": "npm run test && npm run test:e2e",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "next": "15.4.3",
@@ -16,13 +24,22 @@
     "react-dom": "19.1.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.54.1",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9.31.0",
     "eslint-config-next": "^15.4.3",
     "husky": "^9.1.7",
+    "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.5",
+    "playwright": "^1.54.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
