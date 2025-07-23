@@ -239,7 +239,7 @@ export function useGameState() {
           } else {
             handleCardUnmatch([firstCardId, secondCardId]);
           }
-        }, isMatch ? 500 : 1500); // Shorter delay for matches, longer for non-matches
+        }, isMatch ? 1500 : 2000); // Allow time to see emojis before state change
 
         return () => clearTimeout(timer);
       }
