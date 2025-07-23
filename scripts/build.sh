@@ -1,7 +1,11 @@
 #!/bin/bash
 
-# install dependencies
+set -e  # Exit on any error
+
+echo "🔧 Installing dependencies..."
 ./scripts/install.sh
 
-# build
-# TODO: run build commands according to the project stack, requirements, etc. (for example: npm run build)
+echo "🏗️  Building Next.js application..."
+npm run build
+
+echo "✅ Build completed successfully!"
