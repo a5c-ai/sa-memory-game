@@ -17,7 +17,7 @@ describe('Card Component', () => {
     
     // Should show the back of the card (question mark)
     expect(screen.getByText('?')).toBeInTheDocument()
-    expect(screen.queryByText(card.emoji)).not.toBeVisible()
+    expect(screen.queryByText(card.emoji)).not.toBeInTheDocument()
   })
 
   it('renders a flipped card correctly', () => {
@@ -35,8 +35,12 @@ describe('Card Component', () => {
     
     // Should show the emoji and have matched styling
     expect(screen.getByText(card.emoji)).toBeVisible()
+    // Check that the card has the matched animation class
     const cardElement = screen.getByRole('button')
-    expect(cardElement).toHaveClass('bg-green-100', 'border-green-300')
+    expect(cardElement).toHaveClass('animate-pulse-once')
+    // The matched background styling is on the inner div containing the emoji
+    const emojiElement = screen.getByText(card.emoji)
+    expect(emojiElement.parentElement).toHaveClass('bg-green-100', 'border-green-300')
   })
 
   it('calls onClick when clicked', async () => {
