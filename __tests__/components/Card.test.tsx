@@ -1,7 +1,7 @@
-import { render, screen } from '../utils/test-utils'
-import { setupUser } from '../utils/test-utils'
+import { render, screen } from '../utils/test-helpers/test-utils'
+import { setupUser } from '../utils/test-helpers/test-utils'
 import Card from '../../app/components/Card'
-import { createMockCard } from '../utils/test-utils'
+import { createMockCard } from '../utils/test-helpers/test-utils'
 
 describe('Card Component', () => {
   const mockOnClick = jest.fn()
